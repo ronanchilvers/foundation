@@ -25,7 +25,7 @@ abstract class Facade
      */
     public static function setContainer(ContainerInterface $container)
     {
-        static::$container = $container;
+        self::$container = $container;
     }
 
     /**
@@ -36,7 +36,7 @@ abstract class Facade
      */
     public static function getContainer()
     {
-        return static::$container;
+        return self::$container;
     }
 
     /**
@@ -51,6 +51,19 @@ abstract class Facade
     }
 
     /**
+     * Get the service instance for this facade
+     *
+     * @return mixed
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function getService()
+    {
+        $name = static::getFacadeName();
+
+        return self::$container->get($name);
+    }
+
+    /**
      * Magic static call
      *
      * @param string $method
@@ -60,11 +73,11 @@ abstract class Facade
      */
     public static function __callStatic($method, $args)
     {
-        $name = static::getFacadeName();
-        if (!static::$container->has($name)) {
+        $name = self::getFacadeName();
+        if (!self::$container->has($name)) {
             throw new RuntimeException(sprintf('Facade service %s is unknown in the container', $name));
         }
-        $instance = static::$container[$name];
+        $instance = self::$container->get($name);
 
         return call_user_func_array([$instance, $method], $args);
     }
