@@ -1,0 +1,30 @@
+{
+    "name": "ronanchilvers/foundation",
+    "description": "Foundation classes for use in php projects",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ronan Chilvers",
+            "email": "ronan@thelittledot.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Ronanchilvers\\Foundation\\": "src"
+        }
+    },
+    "suggest": {
+        "psr/container": "^1.0 If using Ronanchilvers\\Foundation\\Psr\\ContainerAwareTrait",
+        "psr/log": "^1.0 If using Ronanchilvers\\Foundation\\Psr\\LoggerAwareTrait",
+        "slim/slim": "^3.0 If using the Slim related classes",
+        "symfony/console": "^3.4 If using console related classes"
+    },
+    "require-dev": {
+        "psr/log": "^1.1@dev",
+        "psr/container": "^1.0@dev",
+        "symfony/console": "^3.4"
+    }
+}
