@@ -1,3 +1,6 @@
+/build/
 /vendor/
 composer.lock
 *.sublime-*
+.php-version
+phpunit.xml

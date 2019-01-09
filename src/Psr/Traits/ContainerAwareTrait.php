@@ -33,7 +33,7 @@ trait ContainerAwareTrait
      * @return Psr\Container\ContainerInterface
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    protected function container()
+    protected function container(): ContainerInterface
     {
         return $this->container;
     }
