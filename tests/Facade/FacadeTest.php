@@ -3,8 +3,8 @@
 namespace Ronanchilvers\Foundation\Tests\Facade;
 
 use Ronanchilvers\Foundation\Facade\Facade;
-use Ronanchilvers\Foundation\Tests\Facade\MockFacade;
 use Ronanchilvers\Foundation\Tests\TestCase;
+use RuntimeException;
 use StdClass;
 
 /**
@@ -20,20 +20,23 @@ class FacadeTest extends TestCase
      * @return Psr\Container\ContainerInterface
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    protected function mockContainer()
+    protected function mockContainer($serviceName = 'foobar')
     {
         $builder = $this->getMockBuilder('Psr\Container\ContainerInterface')
                      ->setMethods(['get', 'has']);
         $mock = $builder->getMock();
         $mock->expects($this->any())
              ->method('has')
-             ->with(MockFacade::MOCK_SERVICE_NAME)
+             ->with($serviceName)
              ->willReturn(true);
         $mock->expects($this->any())
              ->method('get')
-             ->with(MockFacade::MOCK_SERVICE_NAME)
-             ->willReturn(new StdClass);
-
+             ->with($serviceName)
+             ->willReturn(new class {
+                public function ahem() {
+                    return 'cough';
+                }
+             });
         return $mock;
     }
 
@@ -45,15 +48,46 @@ class FacadeTest extends TestCase
      */
     public function testFacadeHasCorrectContainer()
     {
-        $mockContainer = $this->mockContainer();
+        $mockContainer = $this->mockContainer('foobar');
         Facade::setContainer(
             $mockContainer
         );
+        $class = new class extends Facade {};
 
         $this->assertEquals(
             $mockContainer,
-            MockFacade::getContainer()
+            $class::getContainer()
         );
+    }
+
+    /**
+     * Test that facades without a name throw exceptions
+     *
+     * @test
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function testFacadeWithNoNameThrowsException()
+    {
+        $this->expectException(RuntimeException::class);
+        $class = new class extends Facade {};
+
+        $class::getFacadeName();
+    }
+
+    /**
+     * Test that an unknown service name throws exceptions
+     *
+     * @test
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function testFacadeWithInvalidServiceNameThrowsException()
+    {
+        $this->expectException(RuntimeException::class);
+        $class = new class extends Facade {
+            static protected $serviceName = 'jumble';
+        };
+
+        $class::ahem();
     }
 
     /**
@@ -64,14 +98,64 @@ class FacadeTest extends TestCase
      */
     public function testFacadeNameIsCorrect()
     {
+        $class = new class extends Facade {
+            static protected $serviceName = 'foobar';
+        };
         $resolvedName = $this->callProtectedMethod(
-            MockFacade::class,
+            $class,
             'getFacadeName'
         );
 
         $this->assertEquals(
-            MockFacade::MOCK_SERVICE_NAME,
+            'foobar',
             $resolvedName
+        );
+    }
+
+    /**
+     * Test that we can get the service from the facade
+     *
+     * @test
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function testFacadeCanReturnTheService()
+    {
+        $mockContainer = $this->mockContainer('foobar');
+        Facade::setContainer(
+            $mockContainer
+        );
+        $class = new class extends Facade {
+            static protected $serviceName = 'foobar';
+        };
+        $containerService = $mockContainer->get('foobar');
+        $service = $class::getService();
+
+        $this->assertSame(
+            $service,
+            $containerService
+        );
+    }
+
+    /**
+     * Test that we can call a method on the service via the facade
+     *
+     * @test
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function testServiceMethodsCanBeCalledViaFacade()
+    {
+        $mockContainer = $this->mockContainer('foobar');
+        Facade::setContainer(
+            $mockContainer
+        );
+        $class = new class extends Facade {
+            protected static $serviceName = 'foobar';
+        };
+        $result = $class::ahem();
+
+        $this->assertSame(
+            $result,
+            'cough'
         );
     }
 }

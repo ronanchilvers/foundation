@@ -13,6 +13,11 @@ use RuntimeException;
 abstract class Facade
 {
     /**
+     * @var string
+     */
+    protected static $serviceName;
+
+    /**
      * @var Psr\Container\ContainerInterface
      */
     protected static $container;
@@ -47,7 +52,11 @@ abstract class Facade
      */
     protected static function getFacadeName()
     {
-        throw new RuntimeException('Facade has not set a name - please override static::getFacadeName()');
+        if (is_null(static::$serviceName)) {
+            throw new RuntimeException('Facade has not set a name - please set static::$serviceName');
+        }
+
+        return static::$serviceName;
     }
 
     /**
@@ -73,7 +82,7 @@ abstract class Facade
      */
     public static function __callStatic($method, $args)
     {
-        $name = self::getFacadeName();
+        $name = static::getFacadeName();
         if (!self::$container->has($name)) {
             throw new RuntimeException(sprintf('Facade service %s is unknown in the container', $name));
         }
