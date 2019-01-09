@@ -13,9 +13,9 @@ use Ronanchilvers\Foundation\Tests\TestCase;
 class LoggerAwareTraitTest extends TestCase
 {
     /**
-     * Get a mock container instance
+     * Get a mock logger instance
      *
-     * @return Psr\Container\ContainerInterface
+     * @return Psr\Log\LoggerInterface
      * @author Ronan Chilvers <ronan@d3r.com>
      */
     protected function mockLogger()
