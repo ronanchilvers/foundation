@@ -18,6 +18,11 @@
             "Ronanchilvers\\Foundation\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Ronanchilvers\\Foundation\\Tests\\": "tests"
+        }
+    },
     "suggest": {
         "psr/container": "^1.0 If using Ronanchilvers\\Foundation\\Psr\\ContainerAwareTrait",
         "psr/log": "^1.0 If using Ronanchilvers\\Foundation\\Psr\\LoggerAwareTrait",
@@ -25,8 +30,9 @@
         "symfony/console": "^3.4 If using console related classes"
     },
     "require-dev": {
-        "psr/log": "^1.1@dev",
+        "phpunit/phpunit": "^6.0",
         "psr/container": "^1.0@dev",
+        "psr/log": "^1.1@dev",
         "symfony/console": "^3.4"
     }
 }
