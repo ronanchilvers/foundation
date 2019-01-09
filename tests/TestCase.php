@@ -24,19 +24,22 @@ abstract class TestCase extends PHPUnitTestCase
     }
 
     /**
-     * Call a protected method on a given object
+     * Call a protected method on a given object or class
      *
-     * @param object $object
+     * @param object|string $objectOrClass
      * @param string $method
      * @param array $params
      * @return mixed
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    protected function callProtectedMethod($object, $method, ...$params)
+    protected function callProtectedMethod($objectOrClass, $method, ...$params)
     {
-        $method = $this->getProtectedMethod($object, $method);
+        $method = $this->getProtectedMethod($objectOrClass, $method);
+        if (is_string($objectOrClass)) {
+            $objectOrClass = null;
+        }
 
-        return $method->invokeArgs($object, $params);
+        return $method->invokeArgs($objectOrClass, $params);
     }
 
     /**
