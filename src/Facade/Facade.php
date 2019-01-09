@@ -65,7 +65,7 @@ abstract class Facade
      * @return mixed
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    public function getService()
+    public static function getService()
     {
         $name = static::getFacadeName();
 
