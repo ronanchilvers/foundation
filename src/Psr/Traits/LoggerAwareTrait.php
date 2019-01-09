@@ -10,15 +10,17 @@ use Psr\Log\LoggerInterface;
  *
  * @author Ronan Chilvers <ronan@d3r.com>
  */
-trait LoggerAwareTrait extends PsrLoggerAwareTrait
+trait LoggerAwareTrait
 {
+    use PsrLoggerAwareTrait;
+
     /**
      * Get the Logger object
      *
      * @return Psr\Log\LoggerInterface
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    protected function logger()
+    protected function logger(): LoggerInterface
     {
         return $this->logger;
     }
