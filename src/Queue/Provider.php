@@ -5,6 +5,8 @@ namespace Ronanchilvers\Foundation\Queue;
 use Pheanstalk\Pheanstalk;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Ronanchilvers\Foundation\Queue\Helper;
 
 /**
@@ -38,8 +40,17 @@ class Provider implements ServiceProviderInterface
         };
 
         $pimple['queue_helper'] = function ($container) {
+            $logger = false;
+            foreach (['logger', LoggerInterface::class] as $key) {
+                if (isset($container[$key])) {
+                    $logger = $container[$key];
+                }
+            }
+            if (false == $logger) {
+                $logger = new NullLogger();
+            }
             $helper = new Helper(
-                $container['logger'],
+                $logger,
                 $container['pheanstalk_connection']
             );
 
