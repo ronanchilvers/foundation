@@ -39,6 +39,7 @@ class Provider implements ServiceProviderInterface
 
         $pimple['queue_helper'] = function ($container) {
             $helper = new Helper(
+                $container['logger'],
                 $container['pheanstalk_connection']
             );
 

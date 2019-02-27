@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use Exception;
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\PheanstalkInterface;
+use Psr\Log\LoggerInterface;
+use Ronanchilvers\Foundation\Psr\Traits\LoggerAwareTrait;
 use Ronanchilvers\Foundation\Queue\ClassJobHandler;
 use Ronanchilvers\Foundation\Queue\FailedJobException;
 use Ronanchilvers\Foundation\Queue\InvalidPayloadException;
@@ -19,6 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Helper
 {
+    use LoggerAwareTrait;
+
     /**
      * @var Pheanstalk\Connection
      */
@@ -29,8 +33,9 @@ class Helper
      *
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    public function __construct(Pheanstalk $connection)
+    public function __construct(LoggerInterface $logger, Pheanstalk $connection)
     {
+        $this->setLogger($logger);
         $this->connection = $connection;
     }
 
@@ -110,11 +115,11 @@ class Helper
                 $output->writeln('Deleting job : ' . $queueJob->getId());
                 $this->connection->delete($queueJob);
             // } catch (FatalException $ex) {
-            //     Log::error('Fatal : ' . $ex->getMessage(), ['exception' => $ex]);
+            //     $this->logger->error('Fatal : ' . $ex->getMessage(), ['exception' => $ex]);
             //     $output->writeln('Burying job after fatal exception : ' . $queueJob->getId());
             //     $this->connection->bury($queueJob);
             } catch (Exception $ex) {
-                Log::error($ex->getMessage(), ['exception' => $ex]);
+                $this->logger->error($ex->getMessage(), ['exception' => $ex]);
                 $output->writeln('Releasing failed job : ' . $queueJob->getId());
                 $this->connection->release($queueJob);
             }
