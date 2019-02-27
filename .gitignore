@@ -4,3 +4,4 @@ composer.lock
 *.sublime-*
 .php-version
 phpunit.xml
+.DS_Store
