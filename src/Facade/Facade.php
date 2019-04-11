@@ -82,11 +82,10 @@ abstract class Facade
      */
     public static function __callStatic($method, $args)
     {
-        $name = static::getFacadeName();
-        if (!self::$container->has($name)) {
+        if (!self::$container->has(static::getFacadeName())) {
             throw new RuntimeException(sprintf('Facade service %s is unknown in the container', $name));
         }
-        $instance = self::$container->get($name);
+        $instance = static::getService();
 
         return call_user_func_array([$instance, $method], $args);
     }
