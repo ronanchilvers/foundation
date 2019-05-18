@@ -1,6 +1,6 @@
 <?php
 
-namespace Ronanchilvers\Foundation\Queue;
+namespace Ronanchilvers\Foundation\Queue\Job;
 
 /**
  * Interface for queue jobs

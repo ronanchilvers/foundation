@@ -8,9 +8,11 @@ use Pheanstalk\Pheanstalk;
 use Pheanstalk\PheanstalkInterface;
 use Psr\Log\LoggerInterface;
 use Ronanchilvers\Foundation\Psr\Traits\LoggerAwareTrait;
-use Ronanchilvers\Foundation\Queue\ClassJobHandler;
-use Ronanchilvers\Foundation\Queue\FailedJobException;
-use Ronanchilvers\Foundation\Queue\InvalidPayloadException;
+use Ronanchilvers\Foundation\Queue\Exception\FailedJobException;
+use Ronanchilvers\Foundation\Queue\Exception\InvalidPayloadException;
+use Ronanchilvers\Foundation\Queue\Handler\ClassJobHandler;
+use Ronanchilvers\Foundation\Queue\Job\DispatchableInterface;
+use Ronanchilvers\Foundation\Queue\Job\JobInterface;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -42,7 +44,7 @@ class Helper
     /**
      * Dispatch a job to the queue
      *
-     * @param App\Queue\JobInterface $job
+     * @param Ronanchilvers\Foundation\Queue\Job\JobInterface $job
      * @author Ronan Chilvers <ronan@d3r.com>
      */
     public function dispatch(DispatchableInterface $dispatchable)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ronanchilvers\Foundation\Queue;
+namespace Ronanchilvers\Foundation\Queue\Handler;
 
 /**
  * Interface for job handler classes

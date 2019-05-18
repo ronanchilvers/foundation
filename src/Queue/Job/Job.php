@@ -1,11 +1,13 @@
 <?php
 
-namespace Ronanchilvers\Foundation\Queue;
+namespace Ronanchilvers\Foundation\Queue\Job;
 
 use App\Queue\PendingDispatch;
 use App\Utility\Facades\Queue;
 use Carbon\Carbon;
 use ReflectionClass;
+use Ronanchilvers\Foundation\Queue\Job\DispatchableInterface;
+use Ronanchilvers\Foundation\Queue\Job\JobInterface;
 
 /**
  * Class representing a queue job
