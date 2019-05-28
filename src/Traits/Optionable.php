@@ -12,7 +12,23 @@ trait Optionable
     /**
      * @var array
      */
+    private $defaults = [];
+
+    /**
+     * @var array
+     */
     private $options;
+
+    /**
+     * Set the defaults for this object
+     *
+     * @param array $defaults
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function setDefaults(array $defaults)
+    {
+        $this->defaults = $defaults;
+    }
 
     /**
      * Set the options for this object
@@ -51,6 +67,9 @@ trait Optionable
     {
         if (isset($this->options[$key])) {
             return $this->options[$key];
+        }
+        if (isset($this->defaults[$key])) {
+            return $this->defaults[$key];
         }
 
         return $default;
