@@ -5,7 +5,7 @@ namespace Ronanchilvers\Foundation\Queue;
 use Carbon\Carbon;
 use Exception;
 use Pheanstalk\Pheanstalk;
-use Pheanstalk\PheanstalkInterface;
+use Pheanstalk\Contract\PheanstalkInterface;
 use Psr\Log\LoggerInterface;
 use Ronanchilvers\Foundation\Psr\Traits\LoggerAwareTrait;
 use Ronanchilvers\Foundation\Queue\Exception\FailedJobException;
