@@ -31,11 +31,10 @@ class Provider implements ServiceProviderInterface
                 'timeout'    => null,
                 'persistent' => false,
             ], $config);
-            $connection = new Pheanstalk(
+            $connection = Pheanstalk::create(
                 $config['host'],
                 $config['port'],
-                $config['timeout'],
-                $config['persistent']
+                $config['timeout']
             );
 
             return $connection;
