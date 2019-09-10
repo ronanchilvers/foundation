@@ -71,6 +71,31 @@ class Config implements ArrayAccess, Iterator
         return $default;
     }
 
+    /**
+     * Get all the keys for this config object
+     *
+     * @return array
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function getAll()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Merge another config object into this one
+     *
+     * @param Ronanchilvers\Foundation\Config $config
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function merge(Config $config)
+    {
+        $this->data = array_replace_recursive(
+            $this->data,
+            $config->data
+        );
+    }
+
     /** START Iterator compliance **/
 
     /**
