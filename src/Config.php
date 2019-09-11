@@ -72,6 +72,27 @@ class Config implements ArrayAccess, Iterator
     }
 
     /**
+     * Get a given key, throwing an exception if it is not found
+     *
+     * @param string $key
+     * @param string $message The exception message to throw
+     * @return mixed
+     * @throws RuntimeException If the key is not found
+     * @author Ronan Chilvers <ronan@d3r.com>
+     */
+    public function getOrThrow(string $key, string $message = null)
+    {
+        $value = $this->offsetGet($key);
+        if (!is_null($value)) {
+            return $value;
+        }
+        if (is_null($message)) {
+            $message = "Key {$key} not found";
+        }
+        throw new RuntimeException($message);
+    }
+
+    /**
      * Get all the keys for this config object
      *
      * @return array
