@@ -4,11 +4,12 @@ namespace Ronanchilvers\Foundation\Queue;
 
 use Carbon\Carbon;
 use Exception;
-use Pheanstalk\Pheanstalk;
 use Pheanstalk\Contract\PheanstalkInterface;
+use Pheanstalk\Pheanstalk;
 use Psr\Log\LoggerInterface;
 use Ronanchilvers\Foundation\Psr\Traits\LoggerAwareTrait;
 use Ronanchilvers\Foundation\Queue\Exception\FailedJobException;
+use Ronanchilvers\Foundation\Queue\Exception\FatalException;
 use Ronanchilvers\Foundation\Queue\Exception\InvalidPayloadException;
 use Ronanchilvers\Foundation\Queue\Handler\ClassJobHandler;
 use Ronanchilvers\Foundation\Queue\Job\DispatchableInterface;
@@ -116,10 +117,10 @@ class Helper
 
                 $output->writeln('Deleting job : ' . $queueJob->getId());
                 $this->connection->delete($queueJob);
-            // } catch (FatalException $ex) {
-            //     $this->logger->error('Fatal : ' . $ex->getMessage(), ['exception' => $ex]);
-            //     $output->writeln('Burying job after fatal exception : ' . $queueJob->getId());
-            //     $this->connection->bury($queueJob);
+            } catch (FatalException $ex) {
+                $this->logger->error('Fatal : ' . $ex->getMessage(), ['exception' => $ex]);
+                $output->writeln('Burying job after fatal exception : ' . $queueJob->getId());
+                $this->connection->bury($queueJob);
             } catch (Exception $ex) {
                 $this->logger->error($ex->getMessage(), ['exception' => $ex]);
                 $output->writeln('Releasing failed job : ' . $queueJob->getId());
