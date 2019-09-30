@@ -215,6 +215,8 @@ class Config implements ArrayAccess, Iterator
 
             return null;
         }
+
+        return $data;
     }
 
     /**
