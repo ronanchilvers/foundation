@@ -8,6 +8,7 @@ use Pheanstalk\Contract\PheanstalkInterface;
 use Pheanstalk\Pheanstalk;
 use Psr\Log\LoggerInterface;
 use Ronanchilvers\Foundation\Psr\Traits\LoggerAwareTrait;
+use Ronanchilvers\Foundation\Queue\Exception\FailedDispatchException;
 use Ronanchilvers\Foundation\Queue\Exception\FailedJobException;
 use Ronanchilvers\Foundation\Queue\Exception\FatalException;
 use Ronanchilvers\Foundation\Queue\Exception\InvalidPayloadException;
@@ -67,13 +68,21 @@ class Helper
             $delay = 0;
         }
 
-        return $this->connection
-            ->useTube($queue)
-            ->put(
-                serialize($data),
-                PheanstalkInterface::DEFAULT_PRIORITY,
-                $delay
+        try {
+            return $this->connection
+                ->useTube($queue)
+                ->put(
+                    serialize($data),
+                    PheanstalkInterface::DEFAULT_PRIORITY,
+                    $delay
+                );
+        } catch (Exception $ex) {
+            throw new FailedDispatchException(
+                'Unable to queue job',
+                0,
+                $ex
             );
+        }
     }
 
     /**
