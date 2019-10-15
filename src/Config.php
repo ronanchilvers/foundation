@@ -4,6 +4,7 @@ namespace Ronanchilvers\Foundation;
 
 use ArrayAccess;
 use Iterator;
+use RuntimeException;
 
 /**
  * Simple class for managing a configuration array
