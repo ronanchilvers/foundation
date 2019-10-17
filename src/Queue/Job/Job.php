@@ -31,10 +31,7 @@ abstract class Job implements
     /**
      * @var array
      */
-    protected $internalProperties = [
-        'delay',
-        'queue'
-    ];
+    protected $internalProperties = [];
 
     /**
      * Get the job class
@@ -55,8 +52,12 @@ abstract class Job implements
      */
     public function getArgs()
     {
-        $properties = get_object_vars($this);
-        foreach ($this->internalProperties as $prop) {
+        $properties         = get_object_vars($this);
+        $internalProperties = array_merge(
+            ['delay', 'queue'],
+            $this->internalProperties
+        );
+        foreach ($internalProperties as $prop) {
             unset($properties[$prop]);
         }
 
