@@ -4,7 +4,6 @@ namespace Ronanchilvers\Foundation\Filesystem;
 
 use League\Flysystem\FilesystemInterface;
 use Ronanchilvers\Foundation\Traits\Optionable;
-use Slim\Psr7\Stream;
 
 /**
  * Disk class representing a single disk
@@ -59,9 +58,9 @@ class Disk
      */
     public function stream($filename)
     {
-        return new Stream($this->filesystem->readStream(
+        return $this->filesystem->readStream(
             $this->path($filename)
-        ));
+        );
     }
 
     /**
