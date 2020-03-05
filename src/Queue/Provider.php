@@ -22,6 +22,7 @@ class Provider implements ServiceProviderInterface
     public function register(Container $container)
     {
         $container->set('pheanstalk_settings', []);
+        $container->set('helper_settings', []);
 
         $container->set('pheanstalk_connection', function ($container) {
             $config = $container->get('pheanstalk_settings');
@@ -41,6 +42,7 @@ class Provider implements ServiceProviderInterface
         });
 
         $container->set('queue_helper', function ($container) {
+            $config = $container->get('helper_settings');
             $logger = false;
             foreach ([LoggerInterface::class, 'logger', 'monolog'] as $key) {
                 if ($container->has($key)) {
@@ -50,9 +52,16 @@ class Provider implements ServiceProviderInterface
             if (false == $logger) {
                 $logger = new NullLogger();
             }
+            if (!isset($config['breakfile'])) {
+                $dir = __DIR__ . '/../../../../../var/cache';
+                if (is_dir($dir)) {
+                    $config['breakfile'] = $dir . '/queue.lock';
+                }
+            }
             $helper = new Helper(
                 $logger,
-                $container->get('pheanstalk_connection')
+                $container->get('pheanstalk_connection'),
+                $config['breakfile']
             );
 
             return $helper;

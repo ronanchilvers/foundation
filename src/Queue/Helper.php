@@ -33,14 +33,23 @@ class Helper
     protected $connection;
 
     /**
+     * @var string
+     */
+    protected $breakFile;
+
+    /**
      * Class constructor
      *
      * @author Ronan Chilvers <ronan@d3r.com>
      */
-    public function __construct(LoggerInterface $logger, Pheanstalk $connection)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        Pheanstalk $connection,
+        string $breakfile
+    ) {
         $this->setLogger($logger);
         $this->connection = $connection;
+        $this->breakFile = $breakfile;
     }
 
     /**
@@ -96,11 +105,55 @@ class Helper
         if (is_null($output)) {
             $output = new NullOutput();
         }
+        $breakFile = $this->breakFile . '.' . $queue;
+
+        if (!file_exists($breakFile)) {
+            $output->writeln(
+                sprintf('Creating breakfile at %s', $breakFile)
+            );
+            $contents = realpath(__FILE__);
+            if (!file_put_contents($breakFile, $contents)) {
+                throw new RuntimeException(
+                    sprintf('Unable to create breakfile at %s', $breakFile)
+                );
+            }
+        }
+
+        $this->logger->debug('Starting queue watch', [
+            'queue' => $queue
+        ]);
         $output->writeln('Starting queue watch : ' . $queue);
         $this->connection->watch($queue);
 
         $iterations = 0;
         while (true) {
+            clearstatcache(true, $breakFile);
+            echo "ping\n";
+            if (!file_exists($breakFile)) {
+                $this->logger->notice('Queue worker exiting', [
+                    'reason' => 'missing breakfile',
+                    'break_file' => $breakFile,
+                ]);
+                $output->writeln('Exiting queue watch as breakfile is missing at ' . $breakFile);
+                break;
+            }
+            $storedPath = trim(file_get_contents($breakFile));
+            if (realpath(__FILE__) !== $storedPath) {
+                $this->logger->notice('Queue worker exiting', [
+                    'reason' => 'path mismatch',
+                    'break_file' => $breakFile,
+                    'file_path' => realpath(__FILE__),
+                    'stored_path' => $storedPath,
+                ]);
+                $output->writeln('Exiting queue watch with mismatched file paths');
+                break;
+            }
+            $this->logger->debug('Queue break file checks ok', [
+                'break_file' => $breakFile,
+                'file_path' => realpath(__FILE__),
+                'stored_path' => $storedPath,
+            ]);
+
             $queueJob = $this->connection->reserve($timeout);
             if (false === $queueJob) {
                 continue;
@@ -142,6 +195,9 @@ class Helper
                 break;
             }
         }
+        $this->logger->debug('Finished queue watch', [
+            'queue' => $queue
+        ]);
         $output->writeln('Finished queue watch : ' . $queue);
 
         return true;
