@@ -5,3 +5,4 @@ composer.lock
 .php-version
 phpunit.xml
 .DS_Store
+.phpunit.*
